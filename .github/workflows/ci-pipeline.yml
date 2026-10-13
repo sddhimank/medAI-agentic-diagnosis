@@ -7,8 +7,9 @@ on:
     branches: [ "main" ]
 
 jobs:
-  code-sanity-test:
+  code-sanity-and-test:
     runs-on: ubuntu-latest
+    
     steps:
     - name: 🔍 Checkout Repository Code
       uses: actions/checkout@v4
@@ -22,14 +23,15 @@ jobs:
     - name: 📦 Compile Application Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 wheel
+        # FIXED: Removed strict ==0.27.0 pin on httpx to prevent dependency resolution conflicts with ollama 0.1.7
+        pip install flake8 wheel pytest pytest-asyncio httpx
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: 🎨 Code Linting Syntax Analysis
       run: |
+        # Fail instantly if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    
+
     - name: 🧪 Execute Automated Unit Test Framework Cases
       run: |
         # Set PYTHONPATH to root workspace so app modules resolve cleanly inside the isolated test folder
@@ -38,7 +40,8 @@ jobs:
 
   docker-build-test:
     runs-on: ubuntu-latest
-    needs: code-sanity-test
+    needs: code-sanity-and-test
+    
     steps:
     - name: 🔍 Checkout Repository Code
       uses: actions/checkout@v4
