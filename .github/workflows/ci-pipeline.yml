@@ -23,8 +23,8 @@ jobs:
     - name: 📦 Compile Application Dependencies
       run: |
         python -m pip install --upgrade pip
-        # FIXED: Removed strict ==0.27.0 pin on httpx to prevent dependency resolution conflicts with ollama 0.1.7
-        pip install flake8 wheel pytest pytest-asyncio httpx
+        pip install flake8 wheel pytest pytest-asyncio
+        # Installs base requirements first so httpx binds within ollama's expected bounds
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: 🎨 Code Linting Syntax Analysis
