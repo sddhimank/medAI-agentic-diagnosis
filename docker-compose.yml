@@ -1,0 +1,50 @@
+services:
+  ollama-cpu:
+    image: ollama/ollama:latest
+    container_name: ollama_cpu_server
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_KEEP_ALIVE=-1
+      - OLLAMA_INTEL_GPU=false
+      - OLLAMA_DEBUG=false
+    # FIXED: Replaced host /tmp binding with an isolated, managed Docker volume loop
+    volumes:
+      - ollama_native_storage:/root/.ollama
+    restart: unless-stopped
+
+  agent-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: medical_agent_api
+    ports:
+      - "8000:8000"
+      - "5678:5678"
+    environment:
+      - OLLAMA_HOST=http://ollama-cpu:11434
+    volumes:
+      - .:/workspace
+    depends_on:
+      - ollama-cpu
+    restart: unless-stopped
+
+  streamlit-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    container_name: medical_agent_ui
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_API_URL=http://agent-api:8000/analyze
+    volumes:
+      - .:/workspace
+    depends_on:
+      - agent-api
+    restart: unless-stopped
+
+# Register the new managed storage volume at the bottom of the file
+volumes:
+  ollama_native_storage:

@@ -1,0 +1,22 @@
+# VS Code files
+.vscode/
+
+# Python caching
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+ENV/
+
+# Local data & weights (Ollama models and sample DICOM files)
+.ollama/
+*.dcm
+*.jpg
+*.png
+*.pdf
+
+# Environment variables
+.env
+*.log

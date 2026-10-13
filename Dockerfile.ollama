@@ -1,0 +1,11 @@
+FROM ollama/ollama:0.5.7
+
+# We swap out the community fork for the official high-performance mistral instruction engine
+# RUN ollama serve & \
+#    sleep 5 && \
+#    ollama pull llama3.2-vision:11b-instruct-q4_K_M && \
+#    ollama pull mistral:7b-instruct-q4_K_M
+
+EXPOSE 11434
+ENTRYPOINT ["ollama", "serve"]
+
