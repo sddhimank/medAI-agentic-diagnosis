@@ -14,7 +14,6 @@ ENV/
 .ollama/
 *.dcm
 *.jpg
-*.png
 *.pdf
 
 # Environment variables
